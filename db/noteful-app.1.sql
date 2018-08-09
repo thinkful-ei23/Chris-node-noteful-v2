@@ -1,24 +1,40 @@
+DROP TABLE IF EXISTS notes_tags;
 DROP TABLE IF EXISTS notes;
 DROP TABLE IF EXISTS folders;
+DROP TABLE IF EXISTS tags;
 
--- added a folders table ****************
-CREATE TABLE folders
+-- added a tags table and insert********************
+CREATE TABLE tags
 (
   id serial PRIMARY KEY,
   name text NOT NULL
+);
+
+INSERT INTO tags 
+  (name) 
+  VALUES
+    ('book'),
+    ('journal'),
+    ('news');
+-- ***********************************************
+-- added a folders table and insert ****************
+CREATE TABLE folders
+(
+  id serial PRIMARY KEY,
+  name text NOT NULL UNIQUE
 );
 
 ALTER SEQUENCE folders_id_seq RESTART WITH 100;
 
 INSERT INTO folders
   (name)
-VALUES
-  ('Archive'),
-  ('Drafts'),
-  ('Personal'),
-  ('Work');
--- ****************************************
-
+  VALUES
+    ('Archive'),
+    ('Drafts'),
+    ('Personal'),
+    ('Work');
+-- *********************************************************
+-- ***********************************************************
 CREATE TABLE notes (
   id serial PRIMARY KEY,
   title text not null,
@@ -29,10 +45,15 @@ CREATE TABLE notes (
 -- ON DELETE SET NULL
 -- ON DELETE CASCADE
 -- ON DELETE RESTRICT
-
 ALTER SEQUENCE notes_id_seq RESTART WITH 1000;
+-- ***********************************************************
+-- added notes_tags table **************************************
+CREATE TABLE notes_tags (
+note_id INTEGER NOT NULL REFERENCES notes ON DELETE CASCADE,
+tag_id INTEGER NOT NULL REFERENCES tags ON DELETE CASCADE
+);
 
-
+-- *******************************************************
 INSERT INTO notes
 (title, content, folder_id) VALUES
   (
@@ -85,3 +106,11 @@ INSERT INTO notes
     'Posuere sollicitudin aliquam ultrices sagittis orci a. Feugiat sed lectus vestibulum mattis ullamcorper velit. Odio pellentesque diam volutpat commodo ',
     100
   );
+
+  INSERT INTO notes_tags
+    (note_id, tag_id) VALUES
+    (1001, 2), (1001, 3),
+    (1003, 1),
+    (1004, 3),
+    (1005, 2),
+    (1009, 3);
